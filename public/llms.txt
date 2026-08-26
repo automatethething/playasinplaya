@@ -1,0 +1,17 @@
+# Example App
+
+Replace this file with a short LLM-readable summary of the product.
+
+## Canonical URL
+https://example.flowstate.market/
+
+## What it does
+- Replace with the app's core user-facing job.
+- List important public pages and authenticated flows.
+
+## Key pages
+- / — home or dashboard
+- /privacy — privacy policy
+- /terms — terms
+- /sitemap.xml — sitemap
+- /robots.txt — crawler policy
