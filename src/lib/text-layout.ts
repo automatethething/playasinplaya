@@ -4,7 +4,6 @@ type MeasureTextHeightInput = {
   font: string;
   lineHeight: number;
   whiteSpace?: "normal" | "pre-wrap";
-  wordBreak?: "normal" | "keep-all";
 };
 
 type MeasureTextHeightOutput = {
@@ -24,7 +23,6 @@ export async function measureTextHeight({
   font,
   lineHeight,
   whiteSpace = "normal",
-  wordBreak = "normal",
 }: MeasureTextHeightInput): Promise<MeasureTextHeightOutput> {
   if (typeof window === "undefined") {
     return { height: lineHeight, lineCount: 1 };
@@ -32,10 +30,7 @@ export async function measureTextHeight({
 
   const { prepare, layout } = await import("@chenglou/pretext");
 
-  const prepared = prepare(text, font, {
-    whiteSpace,
-    wordBreak,
-  });
+  const prepared = prepare(text, font, { whiteSpace });
 
   const result = layout(prepared, width, lineHeight);
 

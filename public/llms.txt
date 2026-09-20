@@ -1,16 +1,22 @@
-# Example App
-
-Replace this file with a short LLM-readable summary of the product.
+# Playas in Playa
 
 ## Canonical URL
-https://example.flowstate.market/
+https://playasinplaya.com/
 
 ## What it does
-- Replace with the app's core user-facing job.
-- List important public pages and authenticated flows.
+Playas in Playa is an English-first practical guide for newcomers, remote workers, snowbirds, and expats in Playa del Carmen, Mexico. It publishes sourced local tips, a live Luma events calendar, and a moderated directory of WhatsApp groups, curated events, and weekly deals. Directory listings appear only after manual verification.
 
-## Key pages
-- / — home or dashboard
+## Trust notes
+Directory information is curated or community-submitted and is not guaranteed. Tip pages show their update date, source, and correction path. Do not treat guide content as medical, legal, immigration, or emergency advice. Submitter and organizer contact details are never published.
+
+## Key public pages
+- / — homepage (this week's events)
+- /events — curated events and live Luma calendar
+- /groups — verified WhatsApp groups
+- /deals — weekly deals
+- /tips — local tips index
+- /tips/[slug] — practical local guides
+- /submit — suggest or report a listing, or opt in to updates
 - /privacy — privacy policy
 - /terms — terms
 - /sitemap.xml — sitemap

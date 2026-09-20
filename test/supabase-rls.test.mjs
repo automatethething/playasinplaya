@@ -6,6 +6,7 @@ import path from 'node:path';
 const migrationsDir = path.resolve('supabase/migrations');
 
 function collectSqlFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
     .filter((file) => file.endsWith('.sql'))
     .map((file) => path.join(dir, file));

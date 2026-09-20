@@ -1,64 +1,55 @@
-# Next.js + ConsentKeys + Supabase App Starter
+# Playas in Playa
 
-Copy this scaffold when creating a new Flowstate app that needs:
-- ConsentKeys auth
-- server-side Supabase access
-- a logged-in dashboard shell
-- namespaced upload/task/testing table stubs
+A practical, English-first Playa del Carmen guide for newcomers, remote workers, snowbirds, and expats.
 
-## Includes
-- Next.js metadata baseline
-- ConsentKeys Auth.js wiring
-- typed session extensions
-- server-side Supabase helper
-- text layout helper (`src/lib/text-layout.ts`) using `@chenglou/pretext` for deterministic multiline measurement
-- PWA install prompt helper and starter app icons
-- Claude Code security-guidance files for in-session vulnerability review
-- homepage with sign-in CTA
-- dashboard shell
-- privacy/terms starter pages
-- upload/task/testing SQL starter migration
-- `.env.example`
+## What is live
 
-## Usage
-1. Copy into `repos/[app-name]`
-2. Replace placeholder app name/domain/table prefixes
-3. Set `NEXT_PUBLIC_APP_URL`
-4. Fill in ConsentKeys and Supabase env vars
-5. Review `_templates/builders/new-app-starter-pack.md`
-6. Review `_templates/builders/consentkeys.md`
-7. Review `_templates/builders/supabase.md`
-8. Run `_templates/builders/launch-checklist.md`
+- Home and Events: live Luma calendar plus manually curated events when a verified listing exists
+- WhatsApp groups and weekly deals: public directories of approved, unexpired listings
+- Local tips: ten sourced guide pages with update dates and a correction path
+- Submit: anonymous group/event/deal suggestions, reports, and email opt-ins
+- Admin: ConsentKeys-protected moderation for authorized operators
 
-## Important
-- Do not reuse ConsentKeys credentials from another app
-- Do not use un-namespaced DB objects
-- New `public` schema tables on Supabase require explicit `GRANT` statements for any Data API role that should reach them; this starter grants `service_role` only by default
-- Run both `node --test test/supabase-rls.test.mjs` and `node --test test/supabase-public-grants.test.mjs` when changing Supabase migrations
-- Run `node --test src/lib/pwaInstall.test.mjs` when changing the PWA install prompt helper
-- Keep `.claude/claude-security-guidance.md` and `.claude/security-patterns.yaml` with the repo so Claude Code and reviewers get Flowstate-specific security rules
-- Do not trust uploaded files without scanning/review
+Public pages still render when the directory database is not configured. They show an empty verified-listings state rather than unpublished or fallback records. Submissions, reports, opt-ins, and `/api/health` require the PostgreSQL runtime.
 
-## Claude Code security plugin
-If using Claude Code in this repo, install the official plugin once in your Claude session:
+## Development
 
-```text
-/plugin marketplace add anthropics/claude-plugins-official
-/plugin install security-guidance@claude-plugins-official
-/reload-plugins
+```bash
+npm install
+npm test
+npm run lint
+npm run typecheck
+npm run build
 ```
 
-This starter includes `.claude/settings.json` to enable the plugin for the repo when available. The plugin is a guardrail, not a merge gate; still run the Flowstate security review and CI checks.
+Set `NEXT_PUBLIC_APP_URL` to the canonical app URL. Public visitors do not need an account. The ConsentKeys dashboard is an admin boundary only.
 
-## Optional UI usage example
-```ts
-import { measureTextHeight } from "@/lib/text-layout";
+## PostgreSQL runtime
 
-const { height, lineCount } = await measureTextHeight({
-  text: "Dynamic card copy...",
-  width: 320,
-  font: "16px Inter",
-  lineHeight: 24,
-});
+Public group, event, and deal reads, plus intake and moderation writes, use the server-only `pg` adapter when `PLAYASINPLAYA_DB_HOST`, `PLAYASINPLAYA_DB_PORT`, `PLAYASINPLAYA_DB_NAME`, `PLAYASINPLAYA_DB_USER`, and `PLAYASINPLAYA_DB_PASSWORD` are configured. Never prefix these with `NEXT_PUBLIC_` or put them in client code. The adapter uses the least-privileged `playasinplaya_app` role, a maximum of three pooled connections, and TLS certificate verification.
+
+The starter dashboard remains a separate legacy data path and is not part of the public guide database.
+
+## Self-hosted runtime bundle
+
+Build and run the included non-root container on port 3000:
+
+```bash
+docker build -t playasinplaya .
+docker run --env-file /secure/playasinplaya.env -p 3000:3000 playasinplaya
 ```
-Use this when you need stable text height before render (virtualization, masonry, dense cards).
+
+Without Docker, the production start command is:
+
+```bash
+npm run build
+PORT=3000 npm run start -- --hostname 0.0.0.0 --port 3000
+```
+
+`GET /api/health` returns only `{ "ok": true }` with HTTP 200 when the server has a configured, reachable PostgreSQL runtime role. It returns only `{ "ok": false }` with HTTP 503 for missing configuration or any database failure. It never returns connection or error details.
+
+Provide these environment variable names through the host's secret store, never in the image or repository: `PLAYASINPLAYA_DB_HOST`, `PLAYASINPLAYA_DB_PORT`, `PLAYASINPLAYA_DB_NAME`, `PLAYASINPLAYA_DB_USER`, `PLAYASINPLAYA_DB_PASSWORD`, `PLAYASINPLAYA_DB_SSL_CA`, `CONSENTKEYS_CLIENT_ID`, `CONSENTKEYS_CLIENT_SECRET`, `CONSENTKEYS_ISSUER`, `CONSENTKEYS_CALLBACK_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `ADMIN_USER_IDS`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_POSTHOG_KEY`, and `NEXT_PUBLIC_POSTHOG_HOST`.
+
+## Content standards
+
+Every tip has a source, verification date, and correction address. Guide content is general information, not medical, legal, travel, or safety advice. Directory listings appear only after manual verification. Do not add secrets to the repository.
