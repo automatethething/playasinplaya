@@ -9,10 +9,11 @@ const eventsPage = read("src/app/events/page.tsx");
 const content = read("src/components/EventsContent.tsx");
 const styles = read("src/app/globals.css");
 
-test("home renders the shared events experience with root navigation and canonical metadata", () => {
-  assert.match(home, /import \{ EventsContent \} from "@\/components\/EventsContent"/);
+test("home renders a local-first decision surface with canonical metadata", () => {
+  assert.match(home, /Make Playa feel like <em>your<\/em> place/);
+  assert.match(home, /Find your people/);
+  assert.match(home, /Start where you are/);
   assert.match(home, /alternates: \{ canonical: "\/" \}/);
-  assert.match(home, /<EventsContent currentPath="\/" heading="Things happening this week…" \/>/);
   assert.match(content, /<GuideNav currentPath=\{currentPath\} \/>/);
   assert.match(content, /<LumaCalendarEmbed \/>/);
   assert.match(content, /<EventMap eventCount=\{events\.length\} \/>/);

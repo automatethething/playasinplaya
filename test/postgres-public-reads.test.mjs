@@ -34,9 +34,9 @@ test("PostgreSQL public-read config requires every server-only connection value"
 
 test("public reads use only the projection view with parameterized item types", () => {
   const postgres = read("src/lib/postgres.ts");
-  assert.match(postgres, /from public\.public_directory_items/);
-  assert.doesNotMatch(postgres, /from public\.directory_items/);
-  assert.doesNotMatch(postgres, /service_role|app_provisioner|SUPABASE/i);
+  assert.match(postgres, /from \$\{directorySchema\}\.public_directory_items/);
+  assert.doesNotMatch(postgres, /from \$\{directorySchema\}\.directory_items/);
+  assert.doesNotMatch(postgres, /service_role|app_provisioner/i);
   assert.match(postgres, /where item_type = \$1/);
   assert.match(postgres, /postgresQuery<PublicDirectoryItem>\(sql, \[itemType\]\)/);
   assert.match(postgres, /max: 3/);

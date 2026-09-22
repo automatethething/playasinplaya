@@ -26,7 +26,7 @@ Set `NEXT_PUBLIC_APP_URL` to the canonical app URL. Public visitors do not need 
 
 ## PostgreSQL runtime
 
-Public group, event, and deal reads, plus intake and moderation writes, use the server-only `pg` adapter when `PLAYASINPLAYA_DB_HOST`, `PLAYASINPLAYA_DB_PORT`, `PLAYASINPLAYA_DB_NAME`, `PLAYASINPLAYA_DB_USER`, and `PLAYASINPLAYA_DB_PASSWORD` are configured. Never prefix these with `NEXT_PUBLIC_` or put them in client code. The adapter uses the least-privileged `playasinplaya_app` role, a maximum of three pooled connections, and TLS certificate verification.
+Public group, event, and deal reads use the server-only `pg` adapter against the app-owned `playasinplaya` schema by default. Configure `PLAYASINPLAYA_DB_HOST` with Supabase's pooled Postgres endpoint rather than a WireGuard-only host to remove the tunnel from the request path. `PLAYASINPLAYA_DB_SCHEMA=public` is retained only as an explicit rollback switch. Never prefix these values with `NEXT_PUBLIC_` or put them in client code. The adapter uses a maximum of three pooled connections and TLS certificate verification.
 
 The starter dashboard remains a separate legacy data path and is not part of the public guide database.
 
@@ -48,7 +48,7 @@ PORT=3000 npm run start -- --hostname 0.0.0.0 --port 3000
 
 `GET /api/health` returns only `{ "ok": true }` with HTTP 200 when the server has a configured, reachable PostgreSQL runtime role. It returns only `{ "ok": false }` with HTTP 503 for missing configuration or any database failure. It never returns connection or error details.
 
-Provide these environment variable names through the host's secret store, never in the image or repository: `PLAYASINPLAYA_DB_HOST`, `PLAYASINPLAYA_DB_PORT`, `PLAYASINPLAYA_DB_NAME`, `PLAYASINPLAYA_DB_USER`, `PLAYASINPLAYA_DB_PASSWORD`, `PLAYASINPLAYA_DB_SSL_CA`, `CONSENTKEYS_CLIENT_ID`, `CONSENTKEYS_CLIENT_SECRET`, `CONSENTKEYS_ISSUER`, `CONSENTKEYS_CALLBACK_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `ADMIN_USER_IDS`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_POSTHOG_KEY`, and `NEXT_PUBLIC_POSTHOG_HOST`.
+Provide these environment variable names through the host's secret store, never in the image or repository: `PLAYASINPLAYA_DB_HOST`, `PLAYASINPLAYA_DB_PORT`, `PLAYASINPLAYA_DB_NAME`, `PLAYASINPLAYA_DB_USER`, `PLAYASINPLAYA_DB_PASSWORD`, `PLAYASINPLAYA_DB_SSL_CA`, `PLAYASINPLAYA_DB_SCHEMA`, `CONSENTKEYS_CLIENT_ID`, `CONSENTKEYS_CLIENT_SECRET`, `CONSENTKEYS_ISSUER`, `CONSENTKEYS_CALLBACK_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `ADMIN_USER_IDS`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_POSTHOG_KEY`, and `NEXT_PUBLIC_POSTHOG_HOST`.
 
 ## Content standards
 

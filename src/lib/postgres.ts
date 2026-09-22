@@ -86,10 +86,14 @@ function getPool() {
   return pool;
 }
 
+const directorySchema = process.env.PLAYASINPLAYA_DB_SCHEMA === "public" ? "public" : "playasinplaya";
+
+// Only the app-owned schema is accepted by default. `public` is retained solely
+// as an explicit rollback switch while the isolated app schema is cut over.
 const publicGroupSql = `
   select id, item_type, title, description, topic, language, audience, area, link_url,
     provenance, verification_method, published_at, last_verified_at, expires_at
-  from public.public_directory_items
+  from ${directorySchema}.public_directory_items
   where item_type = $1
   order by last_verified_at desc
 `;
@@ -97,7 +101,7 @@ const publicGroupSql = `
 const publicEventSql = `
   select id, item_type, title, description, event_starts_at, venue, organizer_name, area,
     source_url, provenance, last_verified_at, expires_at, published_at
-  from public.public_directory_items
+  from ${directorySchema}.public_directory_items
   where item_type = $1
   order by event_starts_at asc
 `;
@@ -105,7 +109,7 @@ const publicEventSql = `
 const publicDealSql = `
   select id, item_type, title, description, business_name, offer, deal_days, area, terms,
     source_url, provenance, last_verified_at, expires_at, published_at
-  from public.public_directory_items
+  from ${directorySchema}.public_directory_items
   where item_type = $1
   order by expires_at asc
 `;
