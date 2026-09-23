@@ -30,6 +30,43 @@ test("PostgreSQL public-read config requires every server-only connection value"
     password: "not-empty",
     ca: undefined,
   });
+  assert.deepEqual(postgresConfigFromEnv({
+    PLAYASINPLAYA_DB_HOST: "db.internal",
+    PLAYASINPLAYA_DB_NAME: "playasinplaya",
+    PLAYASINPLAYA_DB_USER: "playasinplaya_app",
+    PLAYASINPLAYA_DB_PASSWORD: "not-empty",
+  }), {
+    host: "db.internal",
+    port: 5432,
+    database: "playasinplaya",
+    user: "playasinplaya_app",
+    password: "not-empty",
+    ca: undefined,
+  });
+});
+
+test("PostgreSQL config accepts a pooled URL when discrete names are absent", () => {
+  const fromUrl = postgresConfigFromEnv({
+    POSTGRES_URL: "postgresql://playasinplaya_app:secret%40pw@db.example:6543/postgres?sslmode=require",
+  });
+  assert.deepEqual(fromUrl, {
+    host: "db.example",
+    port: 6543,
+    database: "postgres",
+    user: "playasinplaya_app",
+    password: "secret@pw",
+    ca: undefined,
+  });
+  assert.equal(postgresConfigFromEnv({ DATABASE_URL: "https://example.com/not-postgres" }), null);
+  const discreteWins = postgresConfigFromEnv({
+    PLAYASINPLAYA_DB_HOST: "db.internal",
+    PLAYASINPLAYA_DB_PORT: "5432",
+    PLAYASINPLAYA_DB_NAME: "playasinplaya",
+    PLAYASINPLAYA_DB_USER: "playasinplaya_app",
+    PLAYASINPLAYA_DB_PASSWORD: "not-empty",
+    POSTGRES_URL: "postgresql://other:x@other.example:6543/postgres",
+  });
+  assert.equal(discreteWins.host, "db.internal");
 });
 
 test("public reads use only the projection view with parameterized item types", () => {
@@ -51,7 +88,7 @@ test("public reads use only the projection view with parameterized item types", 
 
 test("migrated public-read modules are server-only and no longer use Supabase runtime clients", () => {
   const exampleEnv = read(".env.example");
-  for (const name of ["PLAYASINPLAYA_DB_HOST", "PLAYASINPLAYA_DB_PORT", "PLAYASINPLAYA_DB_NAME", "PLAYASINPLAYA_DB_USER", "PLAYASINPLAYA_DB_PASSWORD"]) assert.match(exampleEnv, new RegExp(`^${name}=`, "m"));
+  for (const name of ["PLAYASINPLAYA_DB_HOST", "PLAYASINPLAYA_DB_PORT", "PLAYASINPLAYA_DB_NAME", "PLAYASINPLAYA_DB_USER", "PLAYASINPLAYA_DB_PASSWORD", "PLAYASINPLAYA_DATABASE_URL"]) assert.match(exampleEnv, new RegExp(`^${name}=`, "m"));
   assert.doesNotMatch(exampleEnv, /NEXT_PUBLIC_PLAYASINPLAYA_DB_/);
   for (const file of ["src/lib/groups.ts", "src/lib/listings.ts", "src/lib/postgres.ts"]) {
     const source = read(file);

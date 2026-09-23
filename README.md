@@ -26,7 +26,7 @@ Set `NEXT_PUBLIC_APP_URL` to the canonical app URL. Public visitors do not need 
 
 ## PostgreSQL runtime
 
-Public group, event, and deal reads use the server-only `pg` adapter against the app-owned `playasinplaya` schema by default. Configure `PLAYASINPLAYA_DB_HOST` with Supabase's pooled Postgres endpoint rather than a WireGuard-only host to remove the tunnel from the request path. `PLAYASINPLAYA_DB_SCHEMA=public` is retained only as an explicit rollback switch. Never prefix these values with `NEXT_PUBLIC_` or put them in client code. The adapter uses a maximum of three pooled connections and TLS certificate verification.
+Public group, event, and deal reads use the server-only `pg` adapter against the app-owned `playasinplaya` schema by default. Configure the discrete `PLAYASINPLAYA_DB_*` names, or a pooled URL in `PLAYASINPLAYA_DATABASE_URL`, `POSTGRES_URL`, `POSTGRES_PRISMA_URL`, or `DATABASE_URL`. `PLAYASINPLAYA_DB_SCHEMA=public` is retained only as an explicit rollback switch. Never prefix these values with `NEXT_PUBLIC_` or put them in client code. The adapter uses a maximum of three pooled connections and TLS certificate verification.
 
 The starter dashboard remains a separate legacy data path and is not part of the public guide database.
 
