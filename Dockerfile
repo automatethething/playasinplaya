@@ -1,7 +1,11 @@
 FROM node:22-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# Avoid npm lifecycle deadlocks in constrained staging VMs; Next build succeeds without optional postinstall hooks.
+ENV NPM_CONFIG_AUDIT=false
+ENV NPM_CONFIG_FUND=false
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+RUN npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
 COPY . .
 RUN npm run build && npm prune --omit=dev
 
