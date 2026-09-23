@@ -76,6 +76,5 @@ alter table playasinplaya.opt_ins enable row level security;
 revoke all on schema playasinplaya from public, anon, authenticated;
 revoke all on all tables in schema playasinplaya from public, anon, authenticated;
 revoke all on playasinplaya.public_directory_items from public, anon, authenticated;
-grant usage on schema playasinplaya to app_runtime;
-grant select on playasinplaya.public_directory_items to app_runtime;
-grant select, insert, update, delete on all tables in schema playasinplaya to app_runtime;
+-- The managed project does not contain the legacy app_runtime role. The pooled
+-- database owner used by this app owns these objects; no browser-facing role is granted access.
