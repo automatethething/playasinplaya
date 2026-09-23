@@ -5,7 +5,7 @@ COPY package.json package-lock.json ./
 ENV NPM_CONFIG_AUDIT=false
 ENV NPM_CONFIG_FUND=false
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false
-RUN npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
+RUN npm ci --omit=optional --ignore-scripts --no-audit --no-fund --prefer-offline --maxsockets=1
 COPY . .
 RUN npm run build && npm prune --omit=dev
 
